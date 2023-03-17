@@ -7,8 +7,9 @@ import lol from "../../public/lol.json";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from './api/auth/[...nextauth]'
+import PunCard from '../../components/puns';
 
-export default function LandingPage() {
+export default function Home() {
 
   const router = useRouter();
 
@@ -24,14 +25,12 @@ export default function LandingPage() {
       </Head>
       <main>
         <NavBar />
-        <div className="flex flex-col items-center justify-center min-h-full max-w-screen py-2">
-          <div className="flex flex-row items-center justify-center min-h-full py-2">
-            <Lottie animationData={lol} loop={true} />
-            <div>
-              <h1 className="text-6xl font-bold">OnlyPuns</h1>
-              <h2 className="text-2xl font-bold">The only place for puns</h2>
-              <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2' onClick={() => router.push('/api/auth/signin')}> Get Started </button>
-            </div>
+        <div className="flex flex-col items-center justify-center min-h-screen max-w-screen py-4 pt-24 my-4">
+          <div className="flex flex-col items-center justify-center min-h-full w-6/12 py-2">
+            {/* create an array of puns and map through them */}
+            {
+                Array(20).fill(<PunCard />)
+            }
           </div>
         </div>
       </main>
@@ -42,11 +41,11 @@ export default function LandingPage() {
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions)
 
-  if (session) {
+  if (!session) {
     //redirect to login page
     return {
       redirect: {
-        destination: "/home",
+        destination: "/",
         permanent: false,
       },
     }
