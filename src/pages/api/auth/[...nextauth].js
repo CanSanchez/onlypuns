@@ -5,6 +5,9 @@ import { prisma } from "../../../../server/db/client"
 
 const secret = process.env.NEXTAUTH_SECRET
 
+console.log("GITHUB_ID:", process.env.GITHUB_ID)
+console.log("GITHUB_SECRET:", process.env.GITHUB_SECRET)
+
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
