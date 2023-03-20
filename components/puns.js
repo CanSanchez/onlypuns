@@ -41,7 +41,7 @@ export default function PunCard(props) {
         } else {
             setTimeAgo(diffSeconds + (diffSeconds > 1 ? ' seconds ago' : ' second ago'));
         }
-    }, []);
+    }, [diffDays, diffHours, diffMinutes, diffSeconds])
 
     console.log(props.pun.tags)
 
