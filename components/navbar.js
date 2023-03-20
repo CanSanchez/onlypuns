@@ -62,7 +62,7 @@ export default function NavBar() {
                     <div class="p-4">
                       <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50">
                         <div class="flex-auto">
-                          <Link href="/home" class="block font-semibold text-gray-900">
+                          <Link href="/puns" class="block font-semibold text-gray-900">
                             Home
                             <span class="absolute inset-0"></span>
                           </Link>

@@ -46,7 +46,7 @@ export async function getServerSideProps(context) {
     //redirect to login page
     return {
       redirect: {
-        destination: "/home",
+        destination: "/puns",
         permanent: false,
       },
     }

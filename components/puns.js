@@ -20,7 +20,6 @@ export default function PunCard(props) {
     //     tags: ["puns", "funny", "lol"],
     // }
 
-
     const [timeAgo, setTimeAgo] = useState('');
 
     // change date format to time ago
@@ -44,17 +43,35 @@ export default function PunCard(props) {
         }
     }, [diffDays, diffHours, diffMinutes, diffSeconds])
 
-    console.log(props.pun.tags)
+    const [showOptions, setShowOptions] = useState(false);
+
+    const [showComments, setShowComments] = useState(false);
 
     return (
             <div className="bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden m-4 flex flex-col items-center justify-center py-4 w-full">
-                <div className="flex flex-row items-center justify-start px-4 py-2 w-full">
+                <div className="flex flex-row items-center justify-between px-4 py-2 w-full">
                     <div className="flex flex-row items-end justify-center">
                         <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={props.pun.author.image} alt="Avatar of User"/>
                         <div className="text-sm">
                             <p className="text-gray-900 leading-none">{props.pun.author.name}</p>
                             <p className="text-gray-600">{timeAgo}</p>
                         </div>
+                    </div>
+                    <div className="flex flex-row items-center justify-end w-fit relative">
+                        <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/dots.png" alt="Options"
+                            onClick={()=>setShowOptions(!showOptions)}/>
+                        {showOptions && (
+                            <div className="flex flex-col items-start justify-center bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden flex-col p-6 w-max absolute right-0 top-6">
+                                <span className="flex flex-row items-center justify-start m-2">
+                                    <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/edit.png" alt="Edit"/>
+                                    <p className="text-gray-500 font-regular">Edit</p>
+                                </span>
+                                <span className="flex flex-row items-center justify-start m-2">
+                                    <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
+                                    <p className="text-gray-500 font-regular">Delete</p>
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="flex flex-col items-center justify-center px-8 py-4 w-full">
@@ -64,11 +81,12 @@ export default function PunCard(props) {
                     <div className="flex flex-row items-center justify-start w-full px-8">
                         <div className="flex flex-row items-center justify-end bg-slate-200	py-2 px-4 rounded-full">
                             <Image alt="like icon" width={30} height={30} src="/icons/like.png" className="w-4 h-4 mr-2" />
-                            <p className="font-semibold">Likes</p><p className="ml-2">{props.pun.likes}</p>
+                            <p className="font-semibold">Likes</p><p className="ml-2">{props.pun.likes.length}</p>
                         </div>
-                        <div className="flex flex-row items-center justify-end ml-4 bg-slate-200 py-2 px-4 rounded-full">
+                        <div className="flex flex-row items-center justify-end ml-4 bg-slate-200 py-2 px-4 rounded-full"
+                            onClick={()=>setShowComments(!showComments)}>
                             <Image alt="comment icon" width={30} height={30} src="/icons/comment.png" className="w-4 h-4 mr-2" />
-                            <p className="font-semibold">Comments</p><p className="ml-2">{props.pun.comments}</p>
+                            <p className="font-semibold">Comments</p><p className="ml-2">{props.pun.comments.length}</p>
                         </div>
                     </div>
                 <div className="flex flex-row items-center justify-start w-full px-8 my-6">
@@ -79,6 +97,30 @@ export default function PunCard(props) {
                         <span key={tag.id} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#{tag.tag}</span>
                     ))}
                 </div>
+                
+                {showComments && (
+                <div className="flex flex-col items-center justify-center w-full px-8 m-4">
+                    <div className="flex flex-col items-center justify-center w-full">
+                        {/* <div className="flex flex-row items-center justify-start w-full">
+                            <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={props.pun.author.image} alt="Avatar of User"/>
+                            <div className="text-sm">
+                                <p className="text-gray-900 leading-none">{props.pun.author.name}</p>
+                                <p className="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc sit amet aliquet lacinia, nunc odio aliquet nunc, nec lacinia massa nisl sit amet mauris. Sed euismod, nunc sit amet aliquet lacinia, nunc odio aliquet nunc, nec lacinia massa nisl sit amet mauris.</p>
+                            </div>
+                        </div> */}
+
+                        {props.pun.comments.map((comment) => (
+                            <div key={comment.id} className="flex flex-row items-center justify-start w-full my-4">
+                                <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={comment.author.image} alt="Avatar of User"/>
+                                <div className="text-sm">
+                                    <p className="text-gray-900 leading-none">{comment.author.name}</p>
+                                    <p className="text-gray-600">{comment.text}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                )}
             </div>
     )
 
