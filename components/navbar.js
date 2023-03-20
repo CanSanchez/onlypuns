@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { useSession, signIn, signOut } from "next-auth/react";
 // import { authOptions } from './api/auth/[...nextauth]'
@@ -23,7 +24,7 @@ export default function NavBar() {
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">OnlyPuns</span>
-            <img className="h-8 w-auto" src="/onlypuns.png" alt="OnlyPuns logo" />
+            <Image width={20} height={20} className="h-8 w-auto" src="/onlypuns.png" alt="OnlyPuns logo" />
           </Link>
         </div>
         <div className="flex lg:hidden">
@@ -46,7 +47,7 @@ export default function NavBar() {
                   className="-m-1.5 p-1.5"
                   aria-expanded="false">
                   <span className="sr-only">Profile Photo</span>
-                  <img className="h-10 w-auto" src={session?.user.image} alt="OnlyPuns logo" />
+                  <Image width={20} height={20} className="h-10 w-auto" src={session?.user.image} alt="OnlyPuns logo" />
                 </Popover.Button>
                 <Transition
                   as={Fragment}
@@ -94,7 +95,7 @@ export default function NavBar() {
           <div className="flex items-center justify-between">
             <Link href="#" className="-m-1.5 p-1">
               <span className="sr-only">About</span>
-              <img
+              <Image width={20} height={20}
                 className="h-8 w-auto"
                 src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
                 alt=""
