@@ -7,6 +7,8 @@ const secret = process.env.NEXTAUTH_SECRET
 
 console.log("GITHUB_ID:", process.env.GITHUB_ID)
 console.log("GITHUB_SECRET:", process.env.GITHUB_SECRET)
+console.log("process.env.DATABASE_URL", process.env.VERCEL_POSTGRESQL_URL)
+
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
