@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("VERCEL_POSTGRESQL_URL")
+  url = env("DATABASE_URL")
 }
 
 model Post {
