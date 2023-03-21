@@ -7,7 +7,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from '../api/auth/[...nextauth]'
 import PunCard from '../../../components/puns';
 import AddPost from '../../../components/addpost';
-// import { prisma } from '../../../server/db/client';
+import { prisma } from '../../../server/db/client';
 import { useState } from 'react';
 
 export default function Home( { posts } ) {
