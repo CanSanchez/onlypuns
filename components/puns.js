@@ -157,7 +157,7 @@ export default function PunCard(props) {
                                             <p className="text-gray-900 leading-none">{comment.author.name}</p>
                                             <p className="text-gray-600">{comment.text}</p>
                                         </div>
-                                        {session.user.id === comment.authorId || session.user.id === props.pun.author.id && (
+                                        {(session.user.email === comment.author.email || session.user.email === props.pun.author.email ) && (
                                             <span className="flex flex-row items-center justify-start m-2"
                                                 onClick={()=>handleDeleteComment(comment.id, comment.postId)}>
                                                 <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
@@ -165,13 +165,14 @@ export default function PunCard(props) {
                                         )}
                                     </>
                                 ) : (
+                                    console.log('comment.author', comment.author.email),
                                     <>
                                          <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={session.user.image} alt="Avatar of User"/>
                                         <div className="text-sm w-full">
                                             <p className="text-gray-900 leading-none">{session.user.name}</p>
                                             <p className="text-gray-600">{comment.text}</p>
                                         </div>
-                                        {session.user.id === comment.authorId || session.user.id === props.pun.author.id && (
+                                        {(session.user.email === comment.author.email || session.user.email === props.pun.author.email ) && (
                                             <span className="flex flex-row items-center justify-start m-2"
                                                 onClick={()=>handleDeleteComment(comment.id, comment.postId)}>
                                                 <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
