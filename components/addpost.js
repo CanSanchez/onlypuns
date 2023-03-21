@@ -1,25 +1,128 @@
 import react from "@heroicons/react";
 import { useState } from "react";
 import { PencilIcon } from "@heroicons/react/24/outline";
+import Image from "next/image";
+import axios from "axios";
 
-export default function AddPost() {
+export default function AddPost(props) {
 
    //create an addpost button
 
     const [show, setShow] = useState(false);
 
+    const [caption, setCaption] = useState("");
+    const [image, setImage] = useState("");
+    const [tags, setTags] = useState([]);
+
+    const [pendingImage, setPendingImage] = useState("");
+
+    console.log(caption, image, tags)
+
+    const handleTags = (e) => {
+        const tag = e.target.value;
+        const tagArray = tag.split(",");
+        setTags(tagArray);
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+       
+        props.addPost(caption, image, tags, props.session.user.email)
+        setShow(false);
+        
+    }
+
+    const handleImage = (file) => {
+       
+        setPendingImage(file);
+        console.log(file);
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "onlypuns");
+
+        axios.post('https://api.cloudinary.com/v1_1/djhxv0heo/image/upload', formData).then((res) => {
+            console.log(res.data.secure_url);
+            setImage(res.data.secure_url);
+        });
+        console.log(image);
+    }
+
+
+    
     return (
-        <div className="flex flex-col items-center justify-center w-full h-full">
-            <button className="flex flex-row items-center justify-center w-fit h-1/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full m-2" onClick={() => setShow(!show)}>
+        <div className="flex flex-col items-center justify-center w-fit h-fit">
+            <button className="flex flex-row items-center justify-center w-fit h-1/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded-full m-2" onClick={() => setShow(!show)}>
                 <PencilIcon className="w-4 h-4 mr-2" /> <p>Add Post</p>
             </button>
             {show && (
-                <div className="flex flex-col items-center justify-center w-1/2 h-1/2 bg-gray-200 rounded">
-                    <input className="w-1/2 h-1/12 m-2" type="text" placeholder="Title" />
-                    <textarea className="w-1/2 h-1/2 m-2" type="text" placeholder="Pun" />
-                    <button className="w-1/12 h-1/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2" onClick={() => setShow(!show)}>
-                        Submit
-                    </button>
+                <div className="flex flex-col items-center justify-center w-screen min-h-screen bg-slate-600/70 rounded fixed left-0 top-0 z-50 overflow-scroll">
+                    <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center w-1/2 h-[90%] relative">
+                        {/* model Post {
+                            id        Int      @id @default(autoincrement())
+                            createdAt DateTime @default(now())
+                            updatedAt DateTime @updatedAt
+                            caption    String
+                            image      String
+                            comments   Comments[]
+                            likes      Likes[]
+                            author    User     @relation(fields: [authorId], references: [id])
+                            authorId  String
+                            tags      Tags[]
+                            } */}
+                         <div className="bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden m-4 flex flex-col items-center justify-center py-4 w-full">
+                                    <div className="flex flex-row items-center justify-between px-4 py-2 w-full">
+                                        <div className="flex flex-row items-center justify-center">
+                                            <Image width={40} height={40} className="rounded-full mr-2" src={props.session.user.image} alt="Avatar of User"/>
+                                            <div className="text-sm">
+                                                <p className="text-gray-900 leading-none">{props.session.user.name}</p>
+                                                <p className="text-gray-600">Now</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-center justify-center px-8 py-4 w-full h-max">
+                                        <input type="file" name="image" id="image" className="hidden" onChange={(e)=>handleImage(e.target.files[0])} />
+                                        <label htmlFor="image" className="flex flex-row items-center justify-center w-full h-[300px] min-h-[200px] bg-slate-200 rounded-lg cursor-pointer object-cover">
+                                        {
+                                            image ?
+                                            <>
+                                                <Image alt="upload icon" width={400} height={400} src={URL.createObjectURL(pendingImage)} className="w-full h-[300px] object-cover" />
+                                            </>
+                                                :
+                                            <>
+                                                {/* <Image alt="upload icon" width={30} height={30} src="/icons/upload.png" className="w-4 h-4 mr-2" /> */}
+                                                <p className="font-semibold">Upload Pun 😃</p>
+                                            </>
+                                        }
+
+                                        </label>
+                                        <input type="text" name="caption" id="caption" placeholder="Caption" className="w-full h-12 bg-slate-200 rounded-lg px-4 mt-4"
+                                            value={caption} 
+                                            onChange={(e)=>setCaption(e.target.value)}/>
+                                        <input type="text" name="tags" id="tags" className="w-full h-12 bg-slate-200 rounded-lg px-4 mt-4"
+                                            placeholder="Tags seperated by commas"
+                                            onChange={(e)=>handleTags(e)}/>
+                                    </div>
+                                    <div className="flex flex-row items-center justify-start px-4 py-2 w-full flex-wrap">
+                                        {
+                                        tags.map((tag, index) => (
+                                                <div key={index} className="flex flex-row items-center justify-center bg-slate-200 rounded-full px-4 py-2 m-2">
+                                                    <p className="text-sm text-gray-700 font-semibold">#{tags[index]}</p>
+                                                </div>  
+                                            ))
+                                        }
+                                    </div>
+                                    <div className="flex flex-col items-center justify-center px-4 py-2 w-full">
+                                        <button className="flex flex-row items-center justify-center w-1/2 h-12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded-full m-2"
+                                            type="submit">
+                                            <PencilIcon className="w-4 h-4 mr-2" /> <p>Post Pun</p>
+                                        </button>
+                                        <p className="cursor-pointer text underline underline-offset-4" onClick={() => setShow(!show)}>
+                                            Cancel
+                                        </p>
+                                    </div>
+                        </div>
+                    </form>
                 </div>
             )}
         </div>

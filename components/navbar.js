@@ -7,13 +7,14 @@ import Image from 'next/image';
 import { useSession, signIn, signOut } from "next-auth/react";
 // import { authOptions } from './api/auth/[...nextauth]'
 import { getServerSession } from "next-auth";
+import AddPost from './addpost';
 
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function NavBar() {
+export default function NavBar(props) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const { data: session } = useSession()
@@ -27,6 +28,7 @@ export default function NavBar() {
             <Image width={20} height={20} className="h-8 w-auto" src="/onlypuns.png" alt="OnlyPuns logo" />
           </Link>
         </div>
+        
         <div className="flex lg:hidden">
           <button
             type="button"
@@ -40,14 +42,16 @@ export default function NavBar() {
        
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {session ? (
-             <Popover.Group className="hidden lg:flex lg:gap-x-12">
+            <>
+              <AddPost session={session} addPost={props.addPost}/>
+             <Popover.Group className="hidden lg:flex lg:gap-x-12 items-center">
               <Popover className="relative">
                 <Popover.Button
                   type='button'
                   className="-m-1.5 p-1.5"
                   aria-expanded="false">
                   <span className="sr-only">Profile Photo</span>
-                  <Image width={20} height={20} className="h-10 w-auto rounded-full" src={session?.user.image} alt="OnlyPuns logo" />
+                  <Image width={40} height={40} className="h-10 w-auto rounded-full flex items-center justify-center" src={session?.user.image} alt="OnlyPuns logo" />
                 </Popover.Button>
                 <Transition
                   as={Fragment}
@@ -82,6 +86,7 @@ export default function NavBar() {
                 </Transition>
               </Popover>
             </Popover.Group>
+            </>
           ) : (
             <Link href="/api/auth/signin" className="text-sm font-semibold leading-6 text-gray-900">
             Log in <span aria-hidden="true">&rarr;</span>

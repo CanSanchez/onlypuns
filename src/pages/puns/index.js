@@ -88,6 +88,32 @@ const [puns, setPuns] = useState(posts)
         }
     }
 
+    const addPost = async (caption, image, tags, authorId) => {
+
+        try {
+
+            const res = await fetch(`/api/puns`, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    caption,
+                    image,
+                    tags,
+                    authorId,
+                })
+            })
+            
+            const data = await res.json()
+            setPuns([data, ...puns])
+
+        } catch (error) {
+            console.log(error)
+        }
+    }   
+
+
   return (
     <>
         <Head>
@@ -96,24 +122,23 @@ const [puns, setPuns] = useState(posts)
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <link rel="icon" href="/onlypuns.png" />
         </Head>
-        <main>
-        <NavBar />
-        <div className="flex flex-col items-center justify-center min-h-screen max-w-screen py-4 pt-24 my-4">
-        <AddPost />
-            <div className="flex flex-col items-center justify-center min-h-full w-6/12 py-2">
-            {
-                puns.map(pun => (
-                    <PunCard
-                        deleteComment={deleteComment}
-                        addComment={addComment}
-                        session={session} 
-                        key={pun.id}
-                        deletePost={deletePost}
-                        pun={pun} />
-                ))
-            }
+        <main className='max-w-screen min-h-full'>
+            <NavBar session={session} addPost={addPost}/>
+            <div className="flex flex-col items-center justify-center min-h-screen max-w-screen py-4 pt-24 my-4">
+                <div className="flex flex-col items-center justify-center min-h-full w-6/12 py-2">
+                {
+                    puns.map(pun => (
+                        <PunCard
+                            deleteComment={deleteComment}
+                            addComment={addComment}
+                            session={session} 
+                            key={pun.id}
+                            deletePost={deletePost}
+                            pun={pun} />
+                    ))
+                }
+                </div>
             </div>
-        </div>
         </main>
     </>
   )

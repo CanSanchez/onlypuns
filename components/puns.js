@@ -68,11 +68,23 @@ export default function PunCard(props) {
             <div className="bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden m-4 flex flex-col items-center justify-center py-4 w-full">
                 <div className="flex flex-row items-center justify-between px-4 py-2 w-full">
                     <div className="flex flex-row items-end justify-center">
-                        <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={props.pun.author.image} alt="Avatar of User"/>
-                        <div className="text-sm">
-                            <p className="text-gray-900 leading-none">{props.pun.author.name}</p>
-                            <p className="text-gray-600">{timeAgo}</p>
-                        </div>
+                        {props.pun.author.image ? (
+                            <>
+                            <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={props.pun.author.image} alt="Avatar of User"/>
+                            <div className="text-sm">
+                                <p className="text-gray-900 leading-none">{props.pun.author.name}</p>
+                                <p className="text-gray-600">{timeAgo}</p>
+                            </div>
+                            </>
+                        ) : (
+                            <>
+                            <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={session.user.image} alt="Avatar of User"/>
+                            <div className="text-sm">
+                                <p className="text-gray-900 leading-none">{session.user.name}</p>
+                                <p className="text-gray-600">{timeAgo}</p>
+                            </div>
+                            </>
+                        )}
                     </div>
                     <div className="flex flex-row items-center justify-end w-fit relative">
                         { session && session.user.email === props.pun.author.email && (
@@ -165,7 +177,6 @@ export default function PunCard(props) {
                                         )}
                                     </>
                                 ) : (
-                                    console.log('comment.author', comment.author.email),
                                     <>
                                          <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={session.user.image} alt="Avatar of User"/>
                                         <div className="text-sm w-full">

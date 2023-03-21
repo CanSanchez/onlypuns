@@ -11,17 +11,7 @@ export default async function handler(req, res) {
         });
         res.json(comments.sort((a, b) => b.createdAt - a.createdAt));
     } else if (req.method === "POST") {
-        // model Comments {
-        //     id        Int      @id @default(autoincrement())
-        //     createdAt DateTime @default(now())
-        //     updatedAt DateTime @updatedAt
-        //     text      String
-        //     author    User     @relation(fields: [authorId], references: [id])
-        //     authorId  String
-        //     post      Post     @relation(fields: [postId], references: [id])
-        //     postId    Int
-        //   }
-
+    
         const newComment = await prisma.comments.create({
         data: {
             text: req.body.text,

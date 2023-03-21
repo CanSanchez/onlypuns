@@ -17,6 +17,18 @@ export default async function handler(req, res) {
         })
         res.json(posts)
     } else if (req.method === 'POST') {
+
+        function formatTags(tags) {
+            const tagObjects = tags.map(tagName => {
+                return {
+                    tag: tagName
+                }
+            });
+            return tagObjects;
+        }
+
+        const formattedTags = formatTags(req.body.tags)
+
         const newPost = await prisma.post.create({
             data: {
 
@@ -32,11 +44,18 @@ export default async function handler(req, res) {
                 //     authorId  String
                 //     tags      Tags[]
                 //   }
-        
-                authorId: req.body.authorId,
                 caption: req.body.caption,
                 image: req.body.image,
-                tags: req.body.tags
+                tags: {
+                    createMany: {
+                        data: formattedTags
+                    }
+                },
+                author: {
+                    connect: {
+                        email: req.body.authorId,
+                    }
+                }
             }
         })
         res.json(newPost)
@@ -46,3 +65,24 @@ export default async function handler(req, res) {
         )
     }
 }
+
+
+ 
+
+
+
+// Here's an updated version of the formatTags() function that returns the correct array of objects:
+
+
+// function formatTags(tags) {
+//   const tagObjects = tags.map(tagName => {
+//     return {
+//       create: {
+//         name: tagName
+//       }
+//     }
+//   });
+//   return tagObjects;
+// }
+
+// This should fix the error you are seeing. Let me know if you have any further questions!
