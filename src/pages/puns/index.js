@@ -13,8 +13,6 @@ import { useState } from 'react';
 export default function Home( { posts } ) {
 
 
-
-
 const [puns, setPuns] = useState(posts)
     // console.log(posts)
     // console.log(puns)
@@ -23,9 +21,9 @@ const [puns, setPuns] = useState(posts)
 
   const { data: session } = useSession()
 
-//   console.log(session)
+    //console.log(session)
 
-//delete post using prisma
+    //delete post using prisma
 
     const deletePost = async (id) => {
 
@@ -58,15 +56,12 @@ const [puns, setPuns] = useState(posts)
                     authorId: email,
                 })
             })
-
             const data = await res.json()
 
             // update new comment to puns state
-            console.log("puns", puns)
             const newPuns = puns.map(pun => pun.id === id ? {...pun, comments: [data, ...pun.comments]} : pun)
-            console.log("newPuns", newPuns)
+            // console.log("newPuns", newPuns)
             setPuns(newPuns)
-
         } catch (error) {
             console.log(error)
         }
@@ -171,9 +166,7 @@ const [puns, setPuns] = useState(posts)
 
 export async function getServerSideProps(context) {
 
-  const session = await getServerSession(context.req, context.res, authOptions)
-  
-    //get posts from prisma
+    const session = await getServerSession(context.req, context.res, authOptions)
     
     const posts = await prisma.post.findMany(
         {
@@ -201,10 +194,9 @@ export async function getServerSideProps(context) {
     const transformedArray = objArray.map((obj) => {
         return {
             ...obj,
-            // likes: obj.likes.length,
-            // comments: obj.comments.length
         }
     })
+
   
     if (!session) {
         //redirect to login page

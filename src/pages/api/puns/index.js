@@ -5,10 +5,21 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
         const posts = await prisma.post.findMany({
             include: {
-                tags: true,
-                likes: true,
+                tags: {
+                    where: {
+                        tagged: true
+                    }
+                },
+                likes: {
+                    where: {
+                        liked: true
+                    }
+                },
                 author: true,
                 comments: {
+                    where: {
+                        commented: true
+                    },
                     include: {
                         author: true
                     }
@@ -65,24 +76,3 @@ export default async function handler(req, res) {
         )
     }
 }
-
-
- 
-
-
-
-// Here's an updated version of the formatTags() function that returns the correct array of objects:
-
-
-// function formatTags(tags) {
-//   const tagObjects = tags.map(tagName => {
-//     return {
-//       create: {
-//         name: tagName
-//       }
-//     }
-//   });
-//   return tagObjects;
-// }
-
-// This should fix the error you are seeing. Let me know if you have any further questions!

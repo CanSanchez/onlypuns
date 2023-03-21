@@ -7,7 +7,6 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 
 
-
 export default function PunCard(props) {
 
     const { data: session } = useSession()
@@ -72,7 +71,7 @@ export default function PunCard(props) {
             <div className="bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden m-4 flex flex-col items-center justify-center py-4 w-full">
                 <div className="flex flex-row items-center justify-between px-4 py-2 w-full">
                     <div className="flex flex-row items-end justify-center">
-                        {props.pun.author.image ? (
+                        {props.pun.author ? (
                             <>
                             <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={props.pun.author.image} alt="Avatar of User"/>
                             <div className="text-sm">
@@ -91,10 +90,15 @@ export default function PunCard(props) {
                         )}
                     </div>
                     <div className="flex flex-row items-center justify-end w-fit relative">
-                        { session && session.user.email === props.pun.author.email && (
-                        <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/dots.png" alt="Options"
-                            onClick={()=>setShowOptions(!showOptions)}/>
-                        )}
+                        { props.pun.author? (
+                            <>
+                            { session.user.email === props.pun.author.email && (
+                                <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/dots.png" alt="Options"
+                                onClick={()=>setShowOptions(!showOptions)}/>
+                            )}
+                            </>
+                            ) : null
+                        }
                         {showOptions && (
                             <div className="flex flex-col items-start justify-center bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden flex-col p-6 w-max absolute right-0 top-6">
                                 <span className="flex flex-row items-center justify-start m-2">
@@ -119,17 +123,26 @@ export default function PunCard(props) {
                     <div className="flex flex-row items-center justify-start w-full px-8">
                         <div className="flex flex-row items-center justify-end bg-slate-200	py-2 px-4 rounded-full cursor-pointer hover:bg-sky-100"
                             onClick={()=>handleLike(props.pun.id)}>
-                            <Image alt="like icon" width={30} height={30} src="/icons/like.png" className="w-4 h-4 mr-2" />
-                            <p className="font-semibold">Likes</p><p className="ml-2">{props.pun.likes.length}</p>
+                            <p className="font-semibold">Likes</p>
+                            {props.pun.likes? (
+                                <p className="ml-2">{props.pun.likes.length}</p>
+                            ) : (
+                                <p className="ml-2">0</p>
+                            )}
                         </div>
                         <div className="flex flex-row items-center justify-end ml-4 bg-slate-200 py-2 px-4 rounded-full cursor-pointer hover:bg-sky-100"
                             onClick={()=>setShowComments(!showComments)}>
                             <Image alt="comment icon" width={30} height={30} src="/icons/comment.png" className="w-4 h-4 mr-2" />
-                            <p className="font-semibold">Comments</p><p className="ml-2">{props.pun.comments.length}</p>
+                            <p className="font-semibold">Comments</p>
+                            {props.pun.comments? (
+                                <p className="ml-2">{props.pun.comments.length}</p>
+                            ) : (
+                                <p className="ml-2">0</p>
+                            )}
                         </div>
                     </div>
                 <div className="flex flex-row items-center justify-start w-full px-8 my-6">
-                    {props.pun.tags.map((tag) => (
+                    { props.pun.tags && props.pun.tags.map((tag) => (
                         <span key={tag.id} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#{tag.tag}</span>
                     ))}
                 </div>
@@ -148,40 +161,48 @@ export default function PunCard(props) {
                                 </button>
                             </form>
                         </div>
-                        { props.pun.comments? props.pun.comments.map((comment) => (
+                        { props.pun.comments && props.pun.comments.map((comment) => (
                              <div key={comment.id} className="flex flex-row items-center justify-start w-full my-4">
-                                { comment.author ? (
-                                    <>
-                                        <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={comment.author.image || session.user.image} alt="Avatar of User"/>
+                                {
+                                    comment.author? ( 
+                                        <>
+                                        <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={comment.author.image} alt="Avatar of User"/>
                                         <div className="text-sm w-full">
                                             <p className="text-gray-900 leading-none">{comment.author.name}</p>
                                             <p className="text-gray-600">{comment.text}</p>
                                         </div>
-                                        {(session.user.email === comment.author.email || session.user.email === props.pun.author.email ) && (
-                                            <span className="flex flex-row items-center justify-start m-2"
-                                                onClick={()=>handleDeleteComment(comment.id, comment.postId)}>
-                                                <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
-                                            </span>
-                                        )}
-                                    </>
-                                ) : (
-                                    <>
-                                         <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={session.user.image} alt="Avatar of User"/>
+                                        </>
+                                    ) : (
+                                        <>
+                                        <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={session.user.image} alt="Avatar of User"/>
                                         <div className="text-sm w-full">
                                             <p className="text-gray-900 leading-none">{session.user.name}</p>
                                             <p className="text-gray-600">{comment.text}</p>
                                         </div>
-                                        {(session.user.email === comment.author.email || session.user.email === props.pun.author.email ) && (
-                                            <span className="flex flex-row items-center justify-start m-2"
-                                                onClick={()=>handleDeleteComment(comment.id, comment.postId)}>
-                                                <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
-                                            </span>
-                                        )}
+                                        </>
+                                    )
+                                }
+                                {comment.author? (
+                                    <>
+                                    {(session.user.email === comment.author.email || session.user.email === props.pun.author.email ) && (
+                                        <span className="flex flex-row items-center justify-start m-2"
+                                            onClick={()=>handleDeleteComment(comment.id, comment.postId)}>
+                                            <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
+                                        </span>
+                                    )}
+                                    </>
+                                ) : (
+                                    <>
+                                    {(session.user.email === props.pun.author.email ) && (
+                                        <span className="flex flex-row items-center justify-start m-2"
+                                            onClick={()=>handleDeleteComment(comment.id, comment.postId)}>
+                                            <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
+                                        </span>
+                                    )}
                                     </>
                                 )}
                             </div>
-                            )) : null
-                        }
+                        ))}
                     </div>
                 </div>
                 )}
