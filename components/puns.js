@@ -157,10 +157,12 @@ export default function PunCard(props) {
                                             <p className="text-gray-900 leading-none">{comment.author.name}</p>
                                             <p className="text-gray-600">{comment.text}</p>
                                         </div>
-                                        <span className="flex flex-row items-center justify-start m-2"
-                                            onClick={()=>handleDeleteComment(comment.id, comment.postId)}>
-                                            <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
-                                        </span>
+                                        {session.user.id === comment.authorId || session.user.id === props.pun.author.id && (
+                                            <span className="flex flex-row items-center justify-start m-2"
+                                                onClick={()=>handleDeleteComment(comment.id, comment.postId)}>
+                                                <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
+                                            </span>
+                                        )}
                                     </>
                                 ) : (
                                     <>
