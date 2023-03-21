@@ -51,7 +51,7 @@ export default function AddPost(props) {
 
     
     return (
-        <div className="flex flex-col items-center justify-center w-fit h-fit">
+        <div className="flex flex-col items-center justify-center w-fit h-fit mr-4">
             <button className="flex flex-row items-center justify-center w-fit h-1/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded-full m-2" onClick={() => setShow(!show)}>
                 <PencilIcon className="w-4 h-4 mr-2" /> <p>Add Post</p>
             </button>

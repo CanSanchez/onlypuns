@@ -114,6 +114,30 @@ const [puns, setPuns] = useState(posts)
     }   
 
 
+    const addLike = async (id, authorId) => {
+
+        try {
+
+            const res = await fetch(`/api/puns/${id}/likes`, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    postId: id,
+                    authorId,
+                })
+            })
+
+            const data = await res.json()
+            const newPuns = puns.map(pun => pun.id === id ? {...pun, likes: [data, ...pun.likes]} : pun)
+            setPuns(newPuns)
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
   return (
     <>
         <Head>
@@ -130,6 +154,7 @@ const [puns, setPuns] = useState(posts)
                     puns.map(pun => (
                         <PunCard
                             deleteComment={deleteComment}
+                            addLike={addLike}
                             addComment={addComment}
                             session={session} 
                             key={pun.id}

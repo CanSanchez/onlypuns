@@ -63,6 +63,10 @@ export default function PunCard(props) {
     const handleDeleteComment = (id, postId) => {
         props.deleteComment(id, postId)
     }
+
+    const handleLike = (id) => {
+        props.addLike(id, session.user.email)
+    }
     
     return (
             <div className="bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden m-4 flex flex-col items-center justify-center py-4 w-full">
@@ -113,20 +117,18 @@ export default function PunCard(props) {
                     <h2 className="text-gray-900 font-bold text-1xl my-4 text-left w-full">{props.pun.caption}</h2>
                 </div>
                     <div className="flex flex-row items-center justify-start w-full px-8">
-                        <div className="flex flex-row items-center justify-end bg-slate-200	py-2 px-4 rounded-full">
+                        <div className="flex flex-row items-center justify-end bg-slate-200	py-2 px-4 rounded-full cursor-pointer hover:bg-sky-100"
+                            onClick={()=>handleLike(props.pun.id)}>
                             <Image alt="like icon" width={30} height={30} src="/icons/like.png" className="w-4 h-4 mr-2" />
                             <p className="font-semibold">Likes</p><p className="ml-2">{props.pun.likes.length}</p>
                         </div>
-                        <div className="flex flex-row items-center justify-end ml-4 bg-slate-200 py-2 px-4 rounded-full"
+                        <div className="flex flex-row items-center justify-end ml-4 bg-slate-200 py-2 px-4 rounded-full cursor-pointer hover:bg-sky-100"
                             onClick={()=>setShowComments(!showComments)}>
                             <Image alt="comment icon" width={30} height={30} src="/icons/comment.png" className="w-4 h-4 mr-2" />
                             <p className="font-semibold">Comments</p><p className="ml-2">{props.pun.comments.length}</p>
                         </div>
                     </div>
                 <div className="flex flex-row items-center justify-start w-full px-8 my-6">
-                    {/* {props.pun.tags.map((tag) => (
-                        <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#{tag}</span>
-                    ))} */}
                     {props.pun.tags.map((tag) => (
                         <span key={tag.id} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#{tag.tag}</span>
                     ))}
@@ -136,11 +138,6 @@ export default function PunCard(props) {
                 <div className="flex flex-col items-center justify-center w-full px-8 m-4">
                     <div className="flex flex-col items-center justify-center w-full">
                         <div className="flex flex-row items-center justify-start w-full">
-                            {/* <input type="text" className="bg-gray-100 rounded-full w-full mr-4 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" placeholder="Add a comment..."
-                                name="comment" id="comment" autoComplete="off"
-                                onChange={(e)=>setNewComment(e.target.value)}/>
-                            <Image alt="comment icon" width={30} height={30} src="/icons/send.png" className="w-4 h-4" 
-                                onClick={()=>handleComment()}/> */}
                             <form className="flex flex-row items-center justify-start w-full" onSubmit={handleComment}>
                                 <input type="text" className="bg-gray-100 rounded-full w-full mr-4 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" placeholder="Add a comment..."
                                     name="comment" id="comment" autoComplete="off" value={newComment}
@@ -151,15 +148,6 @@ export default function PunCard(props) {
                                 </button>
                             </form>
                         </div>
-                        {/* {props.pun.comments.map((comment) => (
-                            <div key={comment.id} className="flex flex-row items-center justify-start w-full my-4">
-                                <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={comment.author.image} alt="Avatar of User"/>
-                                <div className="text-sm">
-                                    <p className="text-gray-900 leading-none">{comment.author.name}</p>
-                                    <p className="text-gray-600">{comment.text}</p>
-                                </div>
-                            </div>
-                        ))} */}
                         { props.pun.comments? props.pun.comments.map((comment) => (
                              <div key={comment.id} className="flex flex-row items-center justify-start w-full my-4">
                                 { comment.author ? (

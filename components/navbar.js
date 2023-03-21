@@ -45,13 +45,13 @@ export default function NavBar(props) {
             <>
               <AddPost session={session} addPost={props.addPost}/>
              <Popover.Group className="hidden lg:flex lg:gap-x-12 items-center">
-              <Popover className="relative">
+              <Popover className="relative flex items-center justify-center">
                 <Popover.Button
                   type='button'
                   className="-m-1.5 p-1.5"
                   aria-expanded="false">
                   <span className="sr-only">Profile Photo</span>
-                  <Image width={40} height={40} className="h-10 w-auto rounded-full flex items-center justify-center" src={session?.user.image} alt="OnlyPuns logo" />
+                  <Image width={50} height={50} className="h-10 w-auto rounded-full flex items-center justify-center" src={session?.user.image} alt="OnlyPuns logo" />
                 </Popover.Button>
                 <Transition
                   as={Fragment}
@@ -119,7 +119,7 @@ export default function NavBar(props) {
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
                 <Link
-                  href="#"
+                  href="/puns"
                   className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Home
@@ -133,7 +133,7 @@ export default function NavBar(props) {
               </div>
               <div className="py-6">
                 <Link
-                  href="#"
+                  href="/api/auth/signin"
                   className="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Log in
@@ -154,7 +154,7 @@ export async function getServerSideProps(context) {
     //redirect to login page
     return {
       redirect: {
-        destination: "/login",
+        destination: "/puns",
         permanent: false,
       },
     }
