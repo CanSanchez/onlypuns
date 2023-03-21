@@ -43,14 +43,39 @@ export default async function handler(req, res) {
         console.log(req.query.postId)
             
             // if delete, delete post in prisma
-           await prisma.post.delete({
+           await prisma.post.findUnique({
                 where: {
                     id: parseInt(req.query.postId)
                 },
                 include: {
-                    tags: true,
+                    comments: true,
                     likes: true,
+                    tags: true
                 }
+            })
+
+            await prisma.comments.deleteMany({
+                where: {
+                    postId: parseInt(req.query.postId)
+                }
+            })
+
+            await prisma.likes.deleteMany({
+                where: {
+                    postId: parseInt(req.query.postId)
+                }
+            })
+
+            await prisma.tags.deleteMany({
+                where: {
+                    postId: parseInt(req.query.postId)
+                }
+            })
+
+            await prisma.post.delete({
+                where: {
+                    id: parseInt(req.query.postId)
+                },
             })
             res.status(204).end()
 
