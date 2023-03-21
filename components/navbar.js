@@ -19,7 +19,7 @@ export default function NavBar() {
   const { data: session } = useSession()
 
   return (
-    <header className="bg-white fixed top-0 left-0 right-0">
+    <header className="bg-white fixed top-0 left-0 right-0 z-10">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
@@ -47,7 +47,7 @@ export default function NavBar() {
                   className="-m-1.5 p-1.5"
                   aria-expanded="false">
                   <span className="sr-only">Profile Photo</span>
-                  <Image width={20} height={20} className="h-10 w-auto" src={session?.user.image} alt="OnlyPuns logo" />
+                  <Image width={20} height={20} className="h-10 w-auto rounded-full" src={session?.user.image} alt="OnlyPuns logo" />
                 </Popover.Button>
                 <Transition
                   as={Fragment}

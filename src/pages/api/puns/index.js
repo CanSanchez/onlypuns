@@ -1,20 +1,23 @@
-// GET all posts from the database
-// POST a new post to the database
-
 export default async function handler(req, res) {
 
     if (req.method === 'GET') {
         const posts = await prisma.post.findMany({
             include: {
-
-                // Include the author object when fetching posts
-
+                tags: true,
+                likes: true,
+                author: true,
+                comments: {
+                    include: {
+                        author: true
+                    }
+                }
             }
         })
         res.json(posts)
     } else if (req.method === 'POST') {
         const newPost = await prisma.post.create({
             data: {
+
                 // model Post {
                 //     id        Int      @id @default(autoincrement())
                 //     createdAt DateTime @default(now())

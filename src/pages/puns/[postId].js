@@ -49,7 +49,11 @@ export async function getServerSideProps(context) {
         include: {
             tags: true,
             likes: true,
-            comments: true,
+            comments: {
+                include: {
+                    author: true,
+                }
+            },
             author: true,
         }
     })
