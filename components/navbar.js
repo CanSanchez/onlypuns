@@ -76,7 +76,7 @@ export default function NavBar(props) {
                       <div class="flex-auto">
                         <div class="block font-semibold text-gray-900"
                           onClick={() => signOut()}>
-                          Sign Out
+                          Log Out
                           <span class="absolute inset-0"></span>
                         </div>
                       </div>
@@ -88,7 +88,7 @@ export default function NavBar(props) {
             </Popover.Group>
             </>
           ) : (
-            <Link href="/api/auth/signin" className="text-sm font-semibold leading-6 text-gray-900">
+            <Link href="/login" className="text-sm font-semibold leading-6 text-gray-900">
             Log in <span aria-hidden="true">&rarr;</span>
             </Link>
           )}
@@ -102,8 +102,8 @@ export default function NavBar(props) {
               <span className="sr-only">About</span>
               <Image width={20} height={20}
                 className="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                alt=""
+                src={session?.user.image}
+                alt="Profile Photo"
               />
             </Link>
             <button
@@ -133,7 +133,7 @@ export default function NavBar(props) {
               </div>
               <div className="py-6">
                 <Link
-                  href="/api/auth/signin"
+                  href="/login"
                   className="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Log in
@@ -150,15 +150,15 @@ export default function NavBar(props) {
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions)
 
-  if (!session) {
-    //redirect to login page
-    return {
-      redirect: {
-        destination: "/puns",
-        permanent: false,
-      },
-    }
-  }
+  // if (!session) {
+  //   //redirect to login page
+  //   return {
+  //     redirect: {
+  //       destination: "/puns",
+  //       permanent: false,
+  //     },
+  //   }
+  // }
 
   return {
     props: {

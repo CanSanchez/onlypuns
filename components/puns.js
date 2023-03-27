@@ -1,15 +1,18 @@
 
 import React from "react";
-import { useSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
+// import { authOptions } from "../src/pages/api/auth/[...nextauth]";
 
+import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function PunCard(props) {
 
     const { data: session } = useSession()
+    const [loginPrompt, setLoginPrompt] = useState(false);
     // console.log(session)
 
     // const post = {
@@ -43,31 +46,46 @@ export default function PunCard(props) {
         }
     }, [diffDays, diffHours, diffMinutes, diffSeconds])
 
+
+    //show options for user to edit or delete post
     const [showOptions, setShowOptions] = useState(false);
 
+    //show comments
     const [showComments, setShowComments] = useState(false);
 
-    const handleDelete = (id) => {
-        props.deletePost(id)
-    }
-    
     const [newComment, setNewComment] = useState('');
 
+    //add comment
     const handleComment = (e) => {
         e.preventDefault();
         props.addComment(newComment, props.pun.id, session.user.email)
         setNewComment('');
     }
 
+    //delete comment
     const handleDeleteComment = (id, postId) => {
         props.deleteComment(id, postId)
     }
 
+    //like post
     const handleLike = (id) => {
-        props.addLike(id, session.user.email)
+
+        session? (
+            props.addLike(id, session.user.email)
+        ) : (
+            setLoginPrompt(true)
+        )
+
+    }
+
+    //delete post
+    const [showDelete, setShowDelete] = useState(false);
+    const handleDelete = (id) => {
+        props.deletePost(id)
     }
     
     return (
+        <>
             <div className="bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden m-4 flex flex-col items-center justify-center py-4 w-full">
                 <div className="flex flex-row items-center justify-between px-4 py-2 w-full">
                     <div className="flex flex-row items-end justify-center">
@@ -89,8 +107,8 @@ export default function PunCard(props) {
                             </>
                         )}
                     </div>
-                    <div className="flex flex-row items-center justify-end w-fit relative">
-                        { props.pun.author? (
+                    <div className="flex flex-row items-center justify-end w-fit relative cursor-pointer">
+                        { props.pun.author && session ? (
                             <>
                             { session.user.email === props.pun.author.email && (
                                 <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/dots.png" alt="Options"
@@ -108,21 +126,42 @@ export default function PunCard(props) {
                                 <span className="flex flex-row items-center justify-start m-2">
                                     <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
                                     <p className="text-gray-500 font-regular"
-                                        onClick={()=>handleDelete(props.pun.id)}>
+                                        onClick={()=>setShowDelete(!showDelete)}>
                                         Delete
                                     </p>
                                 </span>
                             </div>
                         )}
+                            {
+                                showDelete && (
+                                    <div className="flex flex-col items-center justify-center bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden flex-col p-6 w-max absolute right-0 top-6">
+                                        <p className="text-gray-500 font-regular">Are you sure you want to delete this post?</p>
+                                        <div className="flex flex-row items-center justify-center w-full">
+                                            <button className="bg-red-500 text-white font-bold py-2 px-4 rounded-full m-2"
+                                                onClick={()=>handleDelete(props.pun.id)}>
+                                                Delete
+                                            </button>
+                                            <button className="bg-gray-500 text-white font-bold py-2 px-4 rounded-full m-2"
+                                                onClick={()=>setShowDelete(!showDelete)}>
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                )
+                            }
                     </div>
                 </div>
                 <div className="flex flex-col items-center justify-center px-8 py-4 w-full">
-                    <Image alt={props.pun.caption} width={400} height={400} priority className="w-full" src={props.pun.image}/>
-                    <h2 className="text-gray-900 font-bold text-1xl my-4 text-left w-full">{props.pun.caption}</h2>
+                    {/* <Image alt={props.pun.caption} width={400} height={400} priority className="w-full" src={props.pun.image}/> */}
+                    <Image height={400} width={400} priority alt={props.pun.caption} className="w-full" src={props.pun.image}/>
+                    <Link href={`/puns/${props.pun.id}`} className="w-full">
+                        <h2 className="text-gray-900 font-bold text-1xl my-4 text-left w-full">{props.pun.caption}</h2>
+                    </Link>
                 </div>
                     <div className="flex flex-row items-center justify-start w-full px-8">
                         <div className="flex flex-row items-center justify-end bg-slate-200	py-2 px-4 rounded-full cursor-pointer hover:bg-sky-100"
                             onClick={()=>handleLike(props.pun.id)}>
+                            <Image alt="like icon" width={30} height={30} src="/icons/like.png" className="w-4 h-4 mr-2" />
                             <p className="font-semibold">Likes</p>
                             {props.pun.likes? (
                                 <p className="ml-2">{props.pun.likes.length}</p>
@@ -141,26 +180,35 @@ export default function PunCard(props) {
                             )}
                         </div>
                     </div>
-                <div className="flex flex-row items-center justify-start w-full px-8 my-6">
+                <div className="flex flex-row items-center justify-start w-full px-8 my-6 flex-wrap">
                     { props.pun.tags && props.pun.tags.map((tag) => (
-                        <span key={tag.id} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#{tag.tag}</span>
+                        <span key={tag.id} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 flex-nowrap">#{tag.tag}</span>
                     ))}
                 </div>
                 
                 {showComments && (
                 <div className="flex flex-col items-center justify-center w-full px-8 m-4">
                     <div className="flex flex-col items-center justify-center w-full">
-                        <div className="flex flex-row items-center justify-start w-full">
-                            <form className="flex flex-row items-center justify-start w-full" onSubmit={handleComment}>
-                                <input type="text" className="bg-gray-100 rounded-full w-full mr-4 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" placeholder="Add a comment..."
-                                    name="comment" id="comment" autoComplete="off" value={newComment}
-                                    onKeyDown={(e)=>e.key === 'Enter' && handleComment(e)}
-                                    onChange={(e)=>setNewComment(e.target.value)}/>
-                                <button type="submit">
-                                    <Image alt="comment icon" width={30} height={30} src="/icons/send.png" className="w-4 h-4"/>
-                                </button>
-                            </form>
-                        </div>
+                        { session ? (
+                            <div className="flex flex-row items-center justify-start w-full">
+                                <form className="flex flex-row items-center justify-start w-full" onSubmit={handleComment}>
+                                    <input type="text" className="bg-gray-100 rounded-full w-full mr-4 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" placeholder="Add a comment..."
+                                        name="comment" id="comment" autoComplete="off" value={newComment}
+                                        onKeyDown={(e)=>e.key === 'Enter' && handleComment(e)}
+                                        onChange={(e)=>setNewComment(e.target.value)}/>
+                                    <button type="submit">
+                                        <Image alt="comment icon" width={30} height={30} src="/icons/send.png" className="w-4 h-4"/>
+                                    </button>
+                                </form>
+                            </div>
+                        ) : (
+                            <div className="flex flex-row items-center justify-start w-full">
+                                <p className="text-gray-600 font-regular underline underline-offset-4 cursor-pointer"
+                                    onClick={()=>setLoginPrompt(!loginPrompt)}>
+                                    Login to comment
+                                </p>
+                            </div>
+                        )}
                         { props.pun.comments && props.pun.comments.map((comment) => (
                              <div key={comment.id} className="flex flex-row items-center justify-start w-full my-4">
                                 {
@@ -182,31 +230,64 @@ export default function PunCard(props) {
                                         </>
                                     )
                                 }
-                                {comment.author? (
-                                    <>
-                                    {(session.user.email === comment.author.email || session.user.email === props.pun.author.email ) && (
-                                        <span className="flex flex-row items-center justify-start m-2"
-                                            onClick={()=>handleDeleteComment(comment.id, comment.postId)}>
-                                            <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
-                                        </span>
-                                    )}
-                                    </>
-                                ) : (
-                                    <>
-                                    {(session.user.email === props.pun.author.email ) && (
-                                        <span className="flex flex-row items-center justify-start m-2"
-                                            onClick={()=>handleDeleteComment(comment.id, comment.postId)}>
-                                            <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
-                                        </span>
-                                    )}
-                                    </>
-                                )}
+                                {
+                                    session && ( 
+                                        comment.author ? (
+                                            comment.author ? (
+                                                <>
+                                                {(session.user.email === comment.author.email || session.user.email === props.pun.author.email ) && (
+                                                    <span className="flex flex-row items-center justify-start m-2"
+                                                        onClick={()=>handleDeleteComment(comment.id, comment.postId)}>
+                                                        <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
+                                                    </span>
+                                                )}
+                                                </>
+                                            ) : (
+                                                <>
+                                                {(session.user.email === props.pun.author.email ) && (
+                                                    <span className="flex flex-row items-center justify-start m-2"
+                                                        onClick={()=>handleDeleteComment(comment.id, comment.postId)}>
+                                                        <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
+                                                    </span>
+                                                )}
+                                                </>
+                                            )
+                                        ) : (
+                                            <></>
+                                        )
+                                    )
+                                }
                             </div>
                         ))}
                     </div>
                 </div>
                 )}
             </div>
+            {
+                loginPrompt && (
+                    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex flex-col items-center justify-center">
+                        <div className="flex flex-col items-center justify-center bg-white w-1/2 h-1/2 rounded-lg">
+                            <h2 className="text-gray-700 font-bold text-2xl my-6">Please Login</h2>
+                            <span className="flex flex-row items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full my-2"
+                                onClick={()=>signIn('google')}>
+                                <Image alt="google icon" width={30} height={30} src="/icons/google.png" className="w-4 h-4 mr-2" />
+                                Login with Google
+                            </span>
+                            <span className="flex flex-row items-center justify-center bg-purple-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full my-2"
+                                onClick={()=>signIn('github')}>
+                                <Image alt="github icon" width={30} height={30} src="/icons/github.png" className="w-4 h-4 mr-2" />
+                                Login with GitHub
+                            </span>
+                            {/* cancel */}
+                            <p className="text-gray-900 text-sm my-4 underline cursor-pointer"
+                                onClick={()=>setLoginPrompt(false)}>
+                                Cancel
+                            </p>
+                        </div>
+                    </div>
+                )
+            }
+    </>
     )
 
 }

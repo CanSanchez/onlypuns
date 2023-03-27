@@ -35,17 +35,18 @@ export default function AddPost(props) {
     const handleImage = (file) => {
        
         setPendingImage(file);
-        console.log(file);
+        // console.log(file);
 
         const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", "onlypuns");
+        formData.append("effect", "loop");
 
         axios.post('https://api.cloudinary.com/v1_1/djhxv0heo/image/upload', formData).then((res) => {
             console.log(res.data.secure_url);
             setImage(res.data.secure_url);
         });
-        console.log(image);
+        // console.log(image);
     }
 
 
@@ -86,7 +87,7 @@ export default function AddPost(props) {
                                         {
                                             image ?
                                             <>
-                                                <Image alt="upload icon" width={400} height={400} src={URL.createObjectURL(pendingImage)} className="w-full h-[300px] object-cover" />
+                                                <Image alt="upload icon" width={400} height={400} src={URL.createObjectURL(pendingImage)} className="w-full h-[300px] object-cover"/>
                                             </>
                                                 :
                                             <>

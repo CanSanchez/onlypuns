@@ -6,46 +6,58 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from '../api/auth/[...nextauth]'
 import PunCard from '../../../components/puns';
-import AddPost from '../../../components/addpost';
 import { prisma } from '../../../server/db/client';
 import { useState } from 'react';
 
 export default function Home( { posts } ) {
 
 
-const [puns, setPuns] = useState(posts)
+    const [puns, setPuns] = useState(posts)
     // console.log(posts)
     // console.log(puns)
 
-  const router = useRouter();
-
-  const { data: session } = useSession()
-
+    const router = useRouter();
+    const { data: session } = useSession()
     //console.log(session)
 
     //delete post using prisma
-
     const deletePost = async (id) => {
-
        try {
-
-            const res = await fetch(`/api/puns/${id}`, {
+        const res = await fetch(`/api/puns/${id}`, {
                method: 'DELETE'
-           })
+        })
 
-           setPuns(puns.filter(pun => pun.id !== id))
-
-       } catch (error) {
-              console.log(error)
+        setPuns(puns.filter(pun => pun.id !== id))
+        } catch (error) {
+            console.log(error)
         }
     }
 
-
-    // add comment using prisma
-    const addComment = async (comment, id, email) => {
-
+    //add post using prisma
+    const addPost = async (caption, image, tags, authorId) => {
         try {
+            const res = await fetch(`/api/puns`, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    caption,
+                    image,
+                    tags,
+                    authorId,
+                })
+            })
+            const data = await res.json()
+            setPuns([data, ...puns])
+        } catch (error) {
+            console.log(error)
+        }
+    } 
 
+    //add comment using prisma
+    const addComment = async (comment, id, email) => {
+        try {
             const res = await fetch(`/api/puns/${id}/comments`, {
                 method: 'POST',
                 headers: {
@@ -67,10 +79,9 @@ const [puns, setPuns] = useState(posts)
         }
     }
 
+    //delete comment using prisma
     const deleteComment = async (id, postId) => {
-
         try {
-
             const res = await fetch(`/api/puns/${postId}/comments/${id}`, {
                 method: 'DELETE'
             })
@@ -78,41 +89,14 @@ const [puns, setPuns] = useState(posts)
             const newPuns = puns.map(pun => pun.id === postId ? {...pun, comments: pun.comments.filter(comment => comment.id !== id)} : pun)
             setPuns(newPuns)
 
-        } catch (error) {
+        }  catch (error) {
             console.log(error)
         }
     }
 
-    const addPost = async (caption, image, tags, authorId) => {
-
-        try {
-
-            const res = await fetch(`/api/puns`, {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify({
-                    caption,
-                    image,
-                    tags,
-                    authorId,
-                })
-            })
-            
-            const data = await res.json()
-            setPuns([data, ...puns])
-
-        } catch (error) {
-            console.log(error)
-        }
-    }   
-
-
+    //add like using prisma
     const addLike = async (id, authorId) => {
-
         try {
-
             const res = await fetch(`/api/puns/${id}/likes`, {
                 method: 'POST',
                 headers: {
@@ -123,11 +107,9 @@ const [puns, setPuns] = useState(posts)
                     authorId,
                 })
             })
-
             const data = await res.json()
             const newPuns = puns.map(pun => pun.id === id ? {...pun, likes: [data, ...pun.likes]} : pun)
             setPuns(newPuns)
-
         } catch (error) {
             console.log(error)
         }
@@ -144,7 +126,7 @@ const [puns, setPuns] = useState(posts)
         <main className='max-w-screen min-h-full'>
             <NavBar session={session} addPost={addPost}/>
             <div className="flex flex-col items-center justify-center min-h-screen max-w-screen py-4 pt-24 my-4">
-                <div className="flex flex-col items-center justify-center min-h-full w-6/12 py-2">
+                <div className="flex flex-col items-center justify-center min-h-full w-6/12 py-2 tablet:w-9/12 mobile:w-screen">
                 {
                     puns.map(pun => (
                         <PunCard
@@ -198,15 +180,15 @@ export async function getServerSideProps(context) {
     })
 
   
-    if (!session) {
-        //redirect to login page
-        return {
-        redirect: {
-            destination: "/",
-            permanent: false,
-        },
-        }
-    }
+    // if (!session) {
+    //     //redirect to login page
+    //     return {
+    //     redirect: {
+    //         destination: "/",
+    //         permanent: false,
+    //     },
+    //     }
+    // }
 
     return {
         props: {
