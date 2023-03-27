@@ -32,7 +32,7 @@ export default function LandingPage() {
               <h2 className="text-2xl font-bold">The only place for puns</h2>
               <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2' 
                 onClick={() => router.push('/login')}> 
-                Let's have some pun!
+                Let&apos;s have some pun!
               </button>
             </div>
           </div>
