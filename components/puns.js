@@ -194,9 +194,8 @@ export default function PunCard(props) {
                         <span key={tag.id} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 flex-nowrap">#{tag.tag}</span>
                     ))}
                 </div>
-                
-                {showComments && (
                 <div className="flex flex-col items-center justify-center w-full px-8 m-4">
+                {showComments && (
                     <div className="flex flex-col items-center justify-center w-full">
                         { session ? (
                             <div className="flex flex-row items-center justify-start w-full">
@@ -269,8 +268,8 @@ export default function PunCard(props) {
                             </div>
                         ))}
                     </div>
-                </div>
                 )}
+                </div>
             </div>
             {
                 loginPrompt && (
