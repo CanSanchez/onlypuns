@@ -64,18 +64,6 @@ export default function AddPost(props) {
             {show && (
                 <div className="flex flex-col items-center justify-center w-screen min-h-screen bg-slate-600/70 rounded fixed left-0 top-0 z-50 overflow-scroll">
                     <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center w-1/2 h-[90%] relative tablet:w-full mobile:w-full">
-                        {/* model Post {
-                            id        Int      @id @default(autoincrement())
-                            createdAt DateTime @default(now())
-                            updatedAt DateTime @updatedAt
-                            caption    String
-                            image      String
-                            comments   Comments[]
-                            likes      Likes[]
-                            author    User     @relation(fields: [authorId], references: [id])
-                            authorId  String
-                            tags      Tags[]
-                            } */}
                          <div className="bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden m-4 flex flex-col items-center justify-center py-4 w-full">
                                     <div className="flex flex-row items-center justify-between px-4 py-2 w-full">
                                         <div className="flex flex-row items-center justify-center">
@@ -96,7 +84,6 @@ export default function AddPost(props) {
                                             </>
                                                 :
                                             <>
-                                                {/* <Image alt="upload icon" width={30} height={30} src="/icons/upload.png" className="w-4 h-4 mr-2" /> */}
                                                 <p className="font-semibold">Upload Pun 😃</p>
                                             </>
                                         }

@@ -74,7 +74,6 @@ export default function EditPost(props) {
                                             </>
                                                 :
                                             <>
-                                                {/* <Image alt="upload icon" width={30} height={30} src="/icons/upload.png" className="w-4 h-4 mr-2" /> */}
                                                 <Image alt="upload icon" width={400} height={400} src={image} className="w-full h-[300px] object-cover"/>
                                             </>
                                         }
