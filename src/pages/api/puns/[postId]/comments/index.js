@@ -13,19 +13,22 @@ export default async function handler(req, res) {
     } else if (req.method === "POST") {
     
         const newComment = await prisma.comments.create({
-        data: {
-            text: req.body.text,
-            post: {
-                connect: {
-                    id: parseInt(postId),
-                }
+            data: {
+                text: req.body.text,
+                post: {
+                    connect: {
+                        id: parseInt(postId),
+                    }
+                },
+                author: {
+                    connect: {
+                        email: req.body.authorId,
+                    }
+                },
             },
-            author: {
-                connect: {
-                    email: req.body.authorId,
-                }
-            },
-        },
+            include: {
+                author: true,
+            }
         });
         res.json(newComment);
     }

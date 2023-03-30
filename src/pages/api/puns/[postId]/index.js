@@ -9,30 +9,20 @@ export default async function handler(req, res) {
                 id: parseInt(req.query.postId)
             },
             include: {
-                include: {
-                    tags: {
-                        where: {
-                            tagged: true
-                        }
+                tags: true,
+                likes: true,
+                comments: {
+                    include: {
+                        author: true
                     },
-                    likes: {
-                        where: {
-                            liked: true
-                        }
-                    },
-                    author: true,
-                    comments: {
-                        where: {
-                            commented: true
-                        },
-                        include: {
-                            author: true
-                        }
+                    orderBy: {
+                        createdAt: 'desc'
                     }
-                }
+                },
             }
         })
         res.json(post)
+        console.log(post)
     } else if (req.method === 'PUT') {
 
         // if put, update post in prisma

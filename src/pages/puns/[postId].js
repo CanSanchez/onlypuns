@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
 import NavBar from "../../../components/navbar";
 import AddPost from "../../../components/addpost";
@@ -7,30 +7,42 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
+import { prisma } from "../../../server/db/client";
+import Loading from "../../../components/loading";
 
 
 export default function Puns({ pun }) {
 
-    console.log(pun.author.image)
+    const [activePun, setActivePun] = useState(pun)
+
+    console.log(activePun)
+
+    //loading
+    const [loading, setLoading] = useState(false);
 
     const router = useRouter();
     const { data: session } = useSession();
 
         //delete post using prisma
         const deletePost = async (id) => {
+            setLoading(true)
             try {
              const res = await fetch(`/api/puns/${id}`, {
                     method: 'DELETE'
              })
-     
-             setPuns(puns.filter(pun => pun.id !== id))
+             router.push('/puns')
              } catch (error) {
                  console.log(error)
              }
+            setTimeout(() => { 
+                setLoading(false)
+            }, 1000)
          }
      
          //add post using prisma
          const addPost = async (caption, image, tags, authorId) => {
+            setLoading(true)
              try {
                  const res = await fetch(`/api/puns`, {
                      method: 'POST',
@@ -45,11 +57,42 @@ export default function Puns({ pun }) {
                      })
                  })
                  const data = await res.json()
-                 setPuns([data, ...puns])
+                 router.push(`/puns`)
+                 
              } catch (error) {
                  console.log(error)
              }
+            setTimeout(() => {  
+                setLoading(false)
+            }
+            , 1000)
          } 
+
+          //update post using prisma
+
+    const updatePost = async (id, caption, image, tags) => {
+        setLoading(true)
+        try {
+            const res = await fetch(`/api/puns/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    caption,
+                    image,
+                    tags,
+                })
+            })
+            const data = await res.json()
+           setActivePun(data)
+        } catch (error) {
+            console.log(error)
+        }
+        setTimeout(() => {
+            setLoading(false)
+        }, 1000)
+    }
      
          //add comment using prisma
          const addComment = async (comment, id, email) => {
@@ -65,11 +108,8 @@ export default function Puns({ pun }) {
                      })
                  })
                  const data = await res.json()
-     
-                 // update new comment to puns state
-                 const newPuns = puns.map(pun => pun.id === id ? {...pun, comments: [data, ...pun.comments]} : pun)
-                 // console.log("newPuns", newPuns)
-                 setPuns(newPuns)
+                //  update active pun state
+                setActivePun({...activePun, comments: [data, ...activePun.comments]})
              } catch (error) {
                  console.log(error)
              }
@@ -77,14 +117,14 @@ export default function Puns({ pun }) {
      
          //delete comment using prisma
          const deleteComment = async (id, postId) => {
+            console.log(id, postId)
              try {
                  const res = await fetch(`/api/puns/${postId}/comments/${id}`, {
                      method: 'DELETE'
                  })
-     
-                 const newPuns = puns.map(pun => pun.id === postId ? {...pun, comments: pun.comments.filter(comment => comment.id !== id)} : pun)
-                 setPuns(newPuns)
-     
+                const data = await res.json()
+                // update active pun state
+                setActivePun({...activePun, comments: activePun.comments.filter(comment => comment.id !== id)})
              }  catch (error) {
                  console.log(error)
              }
@@ -104,12 +144,15 @@ export default function Puns({ pun }) {
                      })
                  })
                  const data = await res.json()
-                 const newPuns = puns.map(pun => pun.id === id ? {...pun, likes: [data, ...pun.likes]} : pun)
-                 setPuns(newPuns)
+                // update active pun state
+                setActivePun({...activePun, likes: [data, ...activePun.likes]})
              } catch (error) {
                  console.log(error)
              }
          }
+
+        useEffect(() => {
+        }, [activePun])
 
     return (
         <>
@@ -121,16 +164,18 @@ export default function Puns({ pun }) {
             </Head>
             <main className='max-w-screen min-h-full'>
                 <NavBar session={session} addPost={addPost}/>
+                {loading && <Loading />}
                 <div className="flex flex-col items-center justify-center min-h-screen max-w-screen py-4 pt-24 my-4">
                     <div className="flex flex-col items-center justify-center min-h-full w-6/12 py-2 tablet:w-9/12 mobile:w-screen">
                             <PunCard
+                                updatePost={updatePost}
                                 deleteComment={deleteComment}
                                 addLike={addLike}
                                 addComment={addComment}
                                 session={session} 
                                 key={pun.id}
                                 deletePost={deletePost}
-                                pun={pun} />
+                                pun={activePun} />
                     </div>
                 </div>
             </main>
@@ -159,16 +204,6 @@ export async function getServerSideProps(context) {
             author: true,
         }
     })
-
-    // if (!session) {
-    //     //redirect to login page
-    //     return {
-    //     redirect: {
-    //         destination: "/",
-    //         permanent: false,
-    //     },
-    //     }
-    // }
 
     return {
         props: {

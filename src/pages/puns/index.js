@@ -23,7 +23,6 @@ export default function Home( { posts } ) {
 
     //delete post using prisma
     const deletePost = async (id) => {
-        
         setLoading(true)
        try {
         const res = await fetch(`/api/puns/${id}`, {
