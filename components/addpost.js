@@ -6,8 +6,7 @@ import axios from "axios";
 
 export default function AddPost(props) {
 
-   //create an addpost button
-
+    const [loginPrompt, setLoginPrompt] = useState(false);
     const [show, setShow] = useState(false);
 
     const [caption, setCaption] = useState("");
@@ -51,10 +50,17 @@ export default function AddPost(props) {
 
     
     return (
+    <>
         <div className="flex flex-col items-center justify-center w-fit h-fit mr-4">
-            <button className="flex flex-row items-center justify-center w-fit h-1/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded-full m-2" onClick={() => setShow(!show)}>
-                <PencilIcon className="w-4 h-4 mr-2" /> <p>Add Post</p>
-            </button>
+            {props.session ? (
+                <button className="flex flex-row items-center justify-center w-fit h-1/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded-full m-2" onClick={() => setShow(!show)}>
+                    <PencilIcon className="w-4 h-4 mr-2" /> <p>Add Post</p>
+                </button>
+            ) : (
+                <button className="flex flex-row items-center justify-center w-fit h-1/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded-full m-2" onClick={() => setLoginPrompt(!loginPrompt)}>
+                    <PencilIcon className="w-4 h-4 mr-2" /> <p>Add Post</p>
+                </button>
+            )}
             {show && (
                 <div className="flex flex-col items-center justify-center w-screen min-h-screen bg-slate-600/70 rounded fixed left-0 top-0 z-50 overflow-scroll">
                     <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center w-1/2 h-[90%] relative tablet:w-full mobile:w-full">
@@ -126,6 +132,31 @@ export default function AddPost(props) {
                 </div>
             )}
         </div>
+        {
+            loginPrompt && (
+                <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex flex-col items-center justify-center tablet:px-6 mobile:px-4">
+                    <div className="flex flex-col items-center justify-center bg-white w-1/2 h-1/2 rounded-lg tablet:w-full mobile:w-full">
+                        <h2 className="text-gray-700 font-bold text-2xl my-6">Please Login</h2>
+                        <span className="flex flex-row items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full my-2"
+                            onClick={()=>signIn('google')}>
+                            <Image alt="google icon" width={30} height={30} src="/icons/google.png" className="w-4 h-4 mr-2" />
+                            Login with Google
+                        </span>
+                        <span className="flex flex-row items-center justify-center bg-purple-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full my-2"
+                            onClick={()=>signIn('github')}>
+                            <Image alt="github icon" width={30} height={30} src="/icons/github.png" className="w-4 h-4 mr-2" />
+                            Login with GitHub
+                        </span>
+                        {/* cancel */}
+                        <p className="text-gray-900 text-sm my-4 underline cursor-pointer"
+                            onClick={()=>setLoginPrompt(false)}>
+                            Cancel
+                        </p>
+                    </div>
+                </div>
+            )
+        }
+    </>
     )
 }
         
