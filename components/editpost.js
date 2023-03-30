@@ -52,8 +52,8 @@ export default function EditPost(props) {
     
     return (
         <div className="flex flex-col items-center justify-center w-fit h-fit">
-                <div className="flex flex-col items-center justify-center w-screen min-h-screen bg-slate-600/70 rounded fixed left-0 top-0 z-50 overflow-scroll">
-                    <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center w-1/2 h-[90%] relative tablet:w-full mobile:w-full">
+                <div className="flex flex-col items-center justify-center w-screen min-h-screen bg-slate-600/70 rounded fixed left-0 top-0 z-50 overflow-scroll mobile:h-full mobile:py-4">
+                    <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center w-1/2 h-fit relative tablet:w-[90%] mobile:w-full">
                          <div className="bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden m-4 flex flex-col items-center justify-center py-4 w-full">
                                     <div className="flex flex-row items-center justify-between px-4 py-2 w-full">
                                         <div className="flex flex-row items-center justify-center">

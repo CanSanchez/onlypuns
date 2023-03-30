@@ -82,7 +82,7 @@ export default function Home( { posts } ) {
                 })
             })
             const data = await res.json()
-            setPuns(puns.map(pun => pun.id === id ? {...pun, caption, image, tags} : pun))
+            setPuns([data, ...puns.filter(pun => pun.id !== id)])
         } catch (error) {
             console.log(error)
         }

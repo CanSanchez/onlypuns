@@ -297,8 +297,8 @@ export default function PunCard(props) {
             }
             {
                 showEdit && (
-                    <div className="fixed top-0 left-0 z-10 w-full h-full bg-black bg-opacity-50 flex flex-col items-center justify-center tablet:px-6 mobile:px-4">
-                        <div className="flex flex-col items-center justify-center bg-white w-1/2 h-1/2 rounded-lg tablet:w-full mobile:w-full">
+                    <div className="fixed top-0 left-0 z-10 w-full h-full bg-black bg-opacity-50 flex flex-col items-center justify-center overflow-scroll tablet:px-6 mobile:px-4">
+                        <div className="flex flex-col items-center justify-center bg-white w-1/2 h-1/2 rounded-lg tablet:w-full mobile:w-full overflow-scroll">
                             <h2 className="text-gray-700 font-bold text-2xl my-6">Edit Pun</h2>
                             <EditPost 
                                 pun={tobeEdited} 
