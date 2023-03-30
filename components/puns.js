@@ -276,14 +276,14 @@ export default function PunCard(props) {
                     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex flex-col items-center justify-center tablet:px-6 mobile:px-4">
                         <div className="flex flex-col items-center justify-center bg-white w-1/2 h-1/2 rounded-lg tablet:w-full mobile:w-full">
                             <h2 className="text-gray-700 font-bold text-2xl my-6">Please Login</h2>
-                            <span className="flex flex-row items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full my-2"
+                            <span className="flex flex-row items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full my-2 cursor-pointer"
                                 onClick={()=>signIn('google')}>
-                                <Image alt="google icon" width={30} height={30} src="/icons/google.png" className="w-4 h-4 mr-2" />
+                                <Image alt="google icon" width={30} height={30} src="/icons/google.png" className="w-4 h-4 mr-2 cursor-pointer" />
                                 Login with Google
                             </span>
-                            <span className="flex flex-row items-center justify-center bg-purple-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full my-2"
+                            <span className="flex flex-row items-center justify-center bg-purple-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full my-2 cursor-pointer"
                                 onClick={()=>signIn('github')}>
-                                <Image alt="github icon" width={30} height={30} src="/icons/github.png" className="w-4 h-4 mr-2" />
+                                <Image alt="github icon" width={30} height={30} src="/icons/github.png" className="w-4 h-4 mr-2 cursor-pointer" />
                                 Login with GitHub
                             </span>
                             {/* cancel */}
