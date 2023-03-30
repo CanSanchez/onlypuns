@@ -9,12 +9,25 @@ export default async function handler(req, res) {
                 id: parseInt(req.query.postId)
             },
             include: {
-                tags: true,
-                likes: true,
-                author: true,
-                comments: {
-                    include: {
-                        author: true
+                include: {
+                    tags: {
+                        where: {
+                            tagged: true
+                        }
+                    },
+                    likes: {
+                        where: {
+                            liked: true
+                        }
+                    },
+                    author: true,
+                    comments: {
+                        where: {
+                            commented: true
+                        },
+                        include: {
+                            author: true
+                        }
                     }
                 }
             }
@@ -23,18 +36,39 @@ export default async function handler(req, res) {
     } else if (req.method === 'PUT') {
 
         // if put, update post in prisma
+        await prisma.tags.deleteMany({
+            where: {
+                postId: parseInt(req.query.postId)
+            }
+        })
+
+        const tags = req.body.tags
+        const formatTags = tags.map(tag => {
+            return {
+                tag: tag
+            }
+        })
+
         const updatedPost = await prisma.post.update({
+
+            
             where: {
                 id: parseInt(req.query.postId)
             },
             data: {
                 caption: req.body.caption,
                 image: req.body.image,
-                tags: req.body.tags
+                tags: {
+                    createMany: {
+                        data: formatTags
+                    }
+                }
             },
             include: {
                 tags: true,
                 likes: true,
+                comments: true,
+                author: true
             }
         })
         res.json(updatedPost)

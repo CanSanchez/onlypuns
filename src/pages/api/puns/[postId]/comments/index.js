@@ -24,7 +24,7 @@ export default async function handler(req, res) {
                 connect: {
                     email: req.body.authorId,
                 }
-            }
+            },
         },
         });
         res.json(newComment);

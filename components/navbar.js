@@ -3,6 +3,7 @@ import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link';
 import Image from 'next/image';
+import { UserCircleIcon } from '@heroicons/react/24/solid';
 
 import { useSession, signIn, signOut } from "next-auth/react";
 // import { authOptions } from './api/auth/[...nextauth]'
@@ -100,11 +101,15 @@ export default function NavBar(props) {
           <div className="flex items-center justify-between">
             <Link href="#" className="-m-1.5 p-1">
               <span className="sr-only">About</span>
-              <Image width={20} height={20}
-                className="h-8 w-auto"
-                src={session?.user.image}
-                alt="Profile Photo"
-              />
+              {session?.user.image ? (
+                <Image width={20} height={20}
+                  className="h-8 w-auto"
+                  src={session?.user.image}
+                  alt="Profile Photo"
+                />
+              ) : (
+                <UserCircleIcon className="h-8 w-8" aria-hidden="true" />
+              )}
             </Link>
             <button
               type="button"
@@ -132,12 +137,19 @@ export default function NavBar(props) {
                 </Link>
               </div>
               <div className="py-6">
+                {!session ? (
                 <Link
                   href="/login"
                   className="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Log in
                 </Link>
+                ) : (
+                  <div class="block font-semibold text-gray-900"
+                  onClick={() => signOut()}>
+                  Log Out
+                </div>
+                )}
               </div>
             </div>
           </div>

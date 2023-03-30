@@ -22,12 +22,12 @@ export default function LandingPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/onlypuns.png" />
       </Head>
-      <main className="w-screen h-screen">
+      <main className="w-screen h-screen px-24">
         <NavBar />
         <div className="flex flex-col items-center justify-center min-h-full max-w-screen py-2">
-          <div className="flex flex-row items-center justify-center min-h-full py-6">
+          <div className="flex flex-row items-center justify-center min-h-full py-6 mobile:flex-col">
             <Lottie animationData={lol} loop={true} />
-            <div>
+            <div className="flex flex-col items-center justify-center">
               <h1 className="text-6xl font-bold">OnlyPuns</h1>
               <h2 className="text-2xl font-bold">The only place for puns</h2>
               <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2' 

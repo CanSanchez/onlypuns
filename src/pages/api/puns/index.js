@@ -42,19 +42,6 @@ export default async function handler(req, res) {
 
         const newPost = await prisma.post.create({
             data: {
-
-                // model Post {
-                //     id        Int      @id @default(autoincrement())
-                //     createdAt DateTime @default(now())
-                //     updatedAt DateTime @updatedAt
-                //     caption    String
-                //     image      String
-                //     comments   Comments[]
-                //     likes      Likes[]
-                //     author    User     @relation(fields: [authorId], references: [id])
-                //     authorId  String
-                //     tags      Tags[]
-                //   }
                 caption: req.body.caption,
                 image: req.body.image,
                 tags: {
@@ -67,6 +54,12 @@ export default async function handler(req, res) {
                         email: req.body.authorId,
                     }
                 }
+            },
+            include: {
+                tags: true,
+                author: true,
+                comments: true,
+                likes: true
             }
         })
         res.json(newPost)

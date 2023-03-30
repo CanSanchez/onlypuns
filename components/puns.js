@@ -8,6 +8,7 @@ import Link from "next/link";
 // import { authOptions } from "../src/pages/api/auth/[...nextauth]";
 
 import { useSession, signIn, signOut } from "next-auth/react";
+import EditPost from "./editpost";
 
 export default function PunCard(props) {
 
@@ -49,6 +50,20 @@ export default function PunCard(props) {
 
     //show options for user to edit or delete post
     const [showOptions, setShowOptions] = useState(false);
+    const [showEdit, setShowEdit] = useState(false);
+
+    const handleEdit = (pun) => {
+        setShowEdit(true);
+        setTobeEdited(pun)
+    }
+
+    //edit post
+    const [tobeEdited, setTobeEdited] = useState();
+
+    const handleUpdate = (id, caption, image, tags) => {
+        props.updatePost(id, caption, image, tags)
+    }
+
 
     //show comments
     const [showComments, setShowComments] = useState(false);
@@ -89,29 +104,23 @@ export default function PunCard(props) {
             <div className="bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden m-4 flex flex-col items-center justify-center py-4 w-full">
                 <div className="flex flex-row items-center justify-between px-4 py-2 w-full">
                     <div className="flex flex-row items-end justify-center">
-                        {props.pun.author ? (
-                            <>
                             <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={props.pun.author.image} alt="Avatar of User"/>
                             <div className="text-sm">
                                 <p className="text-gray-900 leading-none">{props.pun.author.name}</p>
-                                <p className="text-gray-600">{timeAgo}</p>
+                                <p className="text-gray-600">{timeAgo}
+                                    {
+                                        props.pun.createdAt !== props.pun.updatedAt && (
+                                            <span className="text-gray-600"> (Edited)</span>
+                                        )
+                                    }
+                                </p>
                             </div>
-                            </>
-                        ) : (
-                            <>
-                            <Image width={30} height={30} className="w-10 h-10 rounded-full mr-4" src={session.user.image} alt="Avatar of User"/>
-                            <div className="text-sm">
-                                <p className="text-gray-900 leading-none">{session.user.name}</p>
-                                <p className="text-gray-600">{timeAgo}</p>
-                            </div>
-                            </>
-                        )}
                     </div>
                     <div className="flex flex-row items-center justify-end w-fit relative cursor-pointer">
                         { props.pun.author && session ? (
                             <>
                             { session.user.email === props.pun.author.email && (
-                                <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/dots.png" alt="Options"
+                                <Image width={30} height={30} className="w-4 h-4 mr-2 z-1" src="/icons/dots.png" alt="Options"
                                 onClick={()=>setShowOptions(!showOptions)}/>
                             )}
                             </>
@@ -119,14 +128,15 @@ export default function PunCard(props) {
                         }
                         {showOptions && (
                             <div className="flex flex-col items-start justify-center bg-white shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.2)] rounded-lg overflow-hidden flex-col p-6 w-max absolute right-0 top-6">
-                                <span className="flex flex-row items-center justify-start m-2">
+                                <span className="flex flex-row items-center justify-start m-2"
+                                    onClick={()=>handleEdit(props.pun)}>
                                     <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/edit.png" alt="Edit"/>
                                     <p className="text-gray-500 font-regular">Edit</p>
                                 </span>
-                                <span className="flex flex-row items-center justify-start m-2">
+                                <span className="flex flex-row items-center justify-start m-2"
+                                    onClick={()=>setShowDelete(!showDelete)}>
                                     <Image width={30} height={30} className="w-4 h-4 mr-2" src="/icons/delete.png" alt="Delete"/>
-                                    <p className="text-gray-500 font-regular"
-                                        onClick={()=>setShowDelete(!showDelete)}>
+                                    <p className="text-gray-500 font-regular">
                                         Delete
                                     </p>
                                 </span>
@@ -152,7 +162,6 @@ export default function PunCard(props) {
                     </div>
                 </div>
                 <div className="flex flex-col items-center justify-center px-8 py-4 w-full">
-                    {/* <Image alt={props.pun.caption} width={400} height={400} priority className="w-full" src={props.pun.image}/> */}
                     <Image height={400} width={400} priority alt={props.pun.caption} className="w-full" src={props.pun.image}/>
                     <Link href={`/puns/${props.pun.id}`} className="w-full">
                         <h2 className="text-gray-900 font-bold text-1xl my-4 text-left w-full">{props.pun.caption}</h2>
@@ -265,8 +274,8 @@ export default function PunCard(props) {
             </div>
             {
                 loginPrompt && (
-                    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex flex-col items-center justify-center">
-                        <div className="flex flex-col items-center justify-center bg-white w-1/2 h-1/2 rounded-lg">
+                    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex flex-col items-center justify-center tablet:px-6 mobile:px-4">
+                        <div className="flex flex-col items-center justify-center bg-white w-1/2 h-1/2 rounded-lg tablet:w-full mobile:w-full">
                             <h2 className="text-gray-700 font-bold text-2xl my-6">Please Login</h2>
                             <span className="flex flex-row items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full my-2"
                                 onClick={()=>signIn('google')}>
@@ -283,6 +292,20 @@ export default function PunCard(props) {
                                 onClick={()=>setLoginPrompt(false)}>
                                 Cancel
                             </p>
+                        </div>
+                    </div>
+                )
+            }
+            {
+                showEdit && (
+                    <div className="fixed top-0 left-0 z-10 w-full h-full bg-black bg-opacity-50 flex flex-col items-center justify-center tablet:px-6 mobile:px-4">
+                        <div className="flex flex-col items-center justify-center bg-white w-1/2 h-1/2 rounded-lg tablet:w-full mobile:w-full">
+                            <h2 className="text-gray-700 font-bold text-2xl my-6">Edit Pun</h2>
+                            <EditPost 
+                                pun={tobeEdited} 
+                                setEdit={setShowEdit}
+                                handleUpdate={handleUpdate}
+                                session={session}/>
                         </div>
                     </div>
                 )
